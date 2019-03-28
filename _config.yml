@@ -80,4 +80,6 @@ theme: next
 deploy:
   	type: git  
 #	  repository: git@github.com:weiqinshian/weiqinshian.github.io.git  
-#	  branch: master
+#	  branch: mastergit@github.com:weiqinshian/weiqinshian.github.io.git
+  repository: git@github.com:weiqinshian/weiqinshian.github.io.git
+  branch: master
