@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概述 方式一：最原始的方式-直接new对象 UsersDao类 变更需求之后的改动 dao层接口实现类 BeanFactory模拟spring 工厂接口 ClassPathXmlApplicationContext 模拟spring读取配置文件的类 beans.xml配置文件 UserServiceTest 测试类 输出     概述IOC 是英文 Inversion of Control(控">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【spring01】模拟spring IOC的实现原理">
+<meta property="og:url" content="http://yoursite.com/2019/04/01/【spring01】模拟spring IOC的实现原理/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="概述 方式一：最原始的方式-直接new对象 UsersDao类 变更需求之后的改动 dao层接口实现类 BeanFactory模拟spring 工厂接口 ClassPathXmlApplicationContext 模拟spring读取配置文件的类 beans.xml配置文件 UserServiceTest 测试类 输出     概述IOC 是英文 Inversion of Control(控">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/04/01/【spring01】模拟spring%20IOC的实现原理/2019-04-01-15-38-13.png">
+<meta property="og:updated_time" content="2019-04-01T08:33:41.849Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【spring01】模拟spring IOC的实现原理">
+<meta name="twitter:description" content="概述 方式一：最原始的方式-直接new对象 UsersDao类 变更需求之后的改动 dao层接口实现类 BeanFactory模拟spring 工厂接口 ClassPathXmlApplicationContext 模拟spring读取配置文件的类 beans.xml配置文件 UserServiceTest 测试类 输出     概述IOC 是英文 Inversion of Control(控">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/01/【spring01】模拟spring%20IOC的实现原理/2019-04-01-15-38-13.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/01/【spring01】模拟spring IOC的实现原理/">
+
+
+
+
+
+  <title>【spring01】模拟spring IOC的实现原理 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/01/【spring01】模拟spring IOC的实现原理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/headportrait.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【spring01】模拟spring IOC的实现原理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-01T09:07:12+08:00">
+                2019-04-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> View
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <!-- TOC -->
+<ul>
+<li><a href="#概述">概述</a></li>
+<li><a href="#方式一最原始的方式-直接new对象">方式一：最原始的方式-直接new对象</a><ul>
+<li><a href="#usersdao类">UsersDao类</a></li>
+<li><a href="#变更需求之后的改动">变更需求之后的改动</a></li>
+<li><a href="#dao层接口实现类">dao层接口实现类</a></li>
+<li><a href="#beanfactory模拟spring-工厂接口">BeanFactory模拟spring 工厂接口</a></li>
+<li><a href="#classpathxmlapplicationcontext-模拟spring读取配置文件的类">ClassPathXmlApplicationContext 模拟spring读取配置文件的类</a></li>
+<li><a href="#beansxml配置文件">beans.xml配置文件</a></li>
+<li><a href="#userservicetest-测试类">UserServiceTest 测试类</a></li>
+<li><a href="#输出">输出</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>IOC 是英文 Inversion of Control(控制反转)的缩写。</p>
+<p>控制反转我认为可以这样理解，以前对象创建销毁的控制权是掌握在我们自己手里的，我们自己要创建对象，可以通过new的方式调用对象的构造方法去创建，而，使用了spring框架之后，这种对象控制权被反转了，对象的创建Spring框架帮我们做了。</p>
+<p>下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。<br>假设现在要实现一个简单的三层的调用逻辑，即controller层调用service层，service层调用dao层。</p>
+<h1 id="方式一：最原始的方式-直接new对象"><a href="#方式一：最原始的方式-直接new对象" class="headerlink" title="方式一：最原始的方式-直接new对象"></a>方式一：最原始的方式-直接new对象</h1><p>service层要调用dao层的方法，最原始的方式就是直接创建一个dao层类的对象，然后，调用该对象的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringDemo</span> </span>&#123;    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 传统方式的调用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">demo1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        UsersDao userDAO = <span class="keyword">new</span> UsersDao();</span><br><span class="line">        userDAO.save();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="UsersDao类"><a href="#UsersDao类" class="headerlink" title="UsersDao类"></a>UsersDao类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UsersDao</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"UsersDao执行了..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：<br>UsersDao执行了…   </p>
+<h2 id="变更需求之后的改动"><a href="#变更需求之后的改动" class="headerlink" title="变更需求之后的改动"></a>变更需求之后的改动</h2><p>如果dao层修改了数据库的连接方式，如：由之前的jdbc修改为 hibernate，代码应该怎么修改？<br>根据设计模式的开闭原则，对新增开放，对修改关闭，在尽可能少的改动源码的要求下，最佳方案是下面这样的，dao层新增一个UsersHibernateDao类。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UsersHibernateDao</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"UsersHibernateDao执行了..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后，再修改service层代码的调用方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringDemo</span> </span>&#123;    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 传统方式的调用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">demo1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        UsersHibernateDao userDAO = <span class="keyword">new</span> UsersHibernateDao ();</span><br><span class="line">        userDAO.save();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="不足之处"><a href="#不足之处" class="headerlink" title="不足之处"></a>不足之处</h2><p>dao层发生了变动，对service层的影响比较大，也就是耦合性高。<br> 在上面的示例中，dao层的变动，要修改service层代码的两处。如果，是一个非常复杂的系统，有成千上万个类的系统，那这个修改的工作量就会非常的庞大，改动越大出错的可能性就越大。<br> 那如何进行优化呢？可以使用面向接口编程的方式进行优化</p>
+<h1 id="方式二：通过面向接口编程解耦"><a href="#方式二：通过面向接口编程解耦" class="headerlink" title="方式二：通过面向接口编程解耦"></a>方式二：通过面向接口编程解耦</h1><p><strong>什么是面向接口编程？</strong><br>通俗的理解就是，在dao层定义接口，该层每个类都去继承相应的接口，service层要调用dao层的方法，通过new 接口的方式创建对象。也可以理解为通过多态的方式去创建对象。</p>
+<h2 id="service层"><a href="#service层" class="headerlink" title="service层"></a>service层</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringDemo</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 面向接口编程的方式</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">demo2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        UserDAO userDAO = <span class="keyword">new</span> UserDAOJDBCImpl();</span><br><span class="line">        userDAO.save();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="dao层定义接口"><a href="#dao层定义接口" class="headerlink" title="dao层定义接口"></a>dao层定义接口</h2><p>实现两个层之间的解耦<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserDAO</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="dao层接口实现类"><a href="#dao层接口实现类" class="headerlink" title="dao层接口实现类"></a>dao层接口实现类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * UserDao接口，使用jdbc的方式来实现。</span></span><br><span class="line"><span class="comment"> * 每个方法内部，使用jdbc方法操作数据库</span></span><br><span class="line"><span class="comment"> <span class="doctag">@author</span> XW</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@create</span>_date 2019年1月14日</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDAOJDBCImpl</span> <span class="keyword">implements</span> <span class="title">UserDAO</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"UserDAOJDBCImpl执行了..."</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UserDAOJDBCImpl执行了...</span><br></pre></td></tr></table></figure></p>
+<h2 id="变更需求"><a href="#变更需求" class="headerlink" title="变更需求"></a>变更需求</h2><p>如果，这个项目的数据库连接发生变动了，由之前的jdbc变为hibernate，需要修改哪些地方。</p>
+<ol>
+<li>先新增一个实现了接口的类，如下。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * UserDao接口，使用hibernate的方式来实现。</span></span><br><span class="line"><span class="comment"> * 每个方法内部，使用hibernate方法操作数据库</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> XW</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@create</span>_date 2019年1月14日</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDAOHibernateImpl</span> <span class="keyword">implements</span> <span class="title">UserDAO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"UserDAOHibernateImpl执行了..."</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>修改service层的调用代码<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringDemo</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 面向接口编程的方式</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">demo2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        UserDAO userDAO = <span class="keyword">new</span> UserDAOHibernateImpl();</span><br><span class="line">        userDAO.save();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过面向接口编程方式优化了代码，service层只需要修改一个地方，很显然，使用面向接口编程的方式，降低了service层和dao层的耦合性。<br>上面这个例子是只有一个类的情况，如果，是一个具有成千上万个类的复杂系统，减少一半的改动，就将出错的可能性降低了一半，也可以算是很大的优化了。</p>
+<h2 id="不足之处-1"><a href="#不足之处-1" class="headerlink" title="不足之处"></a>不足之处</h2><ol>
+<li><p>接口和实现类之间还是有耦合关系，还是需要修改已经写好的所有service层中类的代码，修改完之后，需要重新编译和打包、部署。</p>
+</li>
+<li><p>存在泄密风险，在实际项目中，如果，一些service层中有一些类中方法涉及到核心算法（如：搜索引擎、彩票、MD5加盐规则等），这些service层中的方法，可能并没有调用dao层中的方法，使用这种方式，还需要将这些核心方法暴露给修改者。</p>
+</li>
+</ol>
+<h1 id="方式三：工厂模式进一步解耦"><a href="#方式三：工厂模式进一步解耦" class="headerlink" title="方式三：工厂模式进一步解耦"></a>方式三：工厂模式进一步解耦</h1><p>工厂模式，将所有对象的创建都集中在工厂类中，<br>在service层的方法中，调用工厂类的获取对象方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringDemo</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 面向接口编程的方式</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">demo2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        UserDAO userDAO = <span class="keyword">new</span> BeanFactory.setUserDAO();</span><br><span class="line">        userDAO.save();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="工厂类如下图"><a href="#工厂类如下图" class="headerlink" title="工厂类如下图"></a>工厂类如下图</h2><p><img src="2019-04-01-15-38-13.png" alt></p>
+<p>使用这种模式的好处是不再需要修改所有的service层中类的代码，而，是只需要修改一个工厂类中的代码。<br>熟悉工厂模式的话，很容易理解，这个例子就不展示代码了。</p>
+<h2 id="对比面向接口编程"><a href="#对比面向接口编程" class="headerlink" title="对比面向接口编程"></a>对比面向接口编程</h2><p>这种方式，相对于面向接口编程的方式，service层中修改的地方，集中在工厂类中，进一步的减少了修改的代码的数量,降低了耦合性。</p>
+<h2 id="不足之处-2"><a href="#不足之处-2" class="headerlink" title="不足之处"></a>不足之处</h2><p>这种方式，还是需要修改工厂类的代码，然后，重新编译打包项目。<br>即：dao层接口和工厂类还是有耦合关系。</p>
+<h1 id="方式四：工厂模式-反射-配置文件进一步解耦"><a href="#方式四：工厂模式-反射-配置文件进一步解耦" class="headerlink" title="方式四：工厂模式+反射+配置文件进一步解耦"></a>方式四：工厂模式+反射+配置文件进一步解耦</h1><p>这种方式就是spring的ioc的方式，就是ioc的底层实现原理，在此我们模拟一下 。</p>
+<h2 id="UserDAO接口"><a href="#UserDAO接口" class="headerlink" title="UserDAO接口"></a>UserDAO接口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.dao;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.model.User;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserDAO</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">(User user)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="UserDAOImpl-dao层接口实现类"><a href="#UserDAOImpl-dao层接口实现类" class="headerlink" title="UserDAOImpl dao层接口实现类"></a>UserDAOImpl dao层接口实现类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.dao.impl;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.dao.UserDAO;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.model.User;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDAOImpl</span> <span class="keyword">implements</span> <span class="title">UserDAO</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">(User user)</span> </span>&#123;		</span><br><span class="line">		System.out.println(<span class="string">"执行UserDAO中的保存方法！ user saved!"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="UserService类"><a href="#UserService类" class="headerlink" title="UserService类"></a>UserService类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.service;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.dao.UserDAO;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.model.User;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> UserDAO userDAO;  </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">		userDAO.save(user);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> UserDAO <span class="title">getUserDAO</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> userDAO;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserDAO</span><span class="params">(UserDAO userDAO)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.userDAO = userDAO;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="User-实体类"><a href="#User-实体类" class="headerlink" title="User 实体类"></a>User 实体类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">package</span> com.xiewei.model;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String username;</span><br><span class="line">	<span class="keyword">private</span> String password;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> username;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.username = username;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getPassword</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> password;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPassword</span><span class="params">(String password)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.password = password;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="BeanFactory模拟spring-工厂接口"><a href="#BeanFactory模拟spring-工厂接口" class="headerlink" title="BeanFactory模拟spring 工厂接口"></a>BeanFactory模拟spring 工厂接口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BeanFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">getBean</span><span class="params">(String id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ClassPathXmlApplicationContext-模拟spring读取配置文件的类"><a href="#ClassPathXmlApplicationContext-模拟spring读取配置文件的类" class="headerlink" title="ClassPathXmlApplicationContext 模拟spring读取配置文件的类"></a>ClassPathXmlApplicationContext 模拟spring读取配置文件的类</h2><p><strong>spring**</strong>源代码中也有一个类叫<strong>**ClassPathXmlApplicationContext</strong>，其内部实现原理就是下面这样的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">package</span> com.xiewei.spring;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> org.jdom.Document;</span><br><span class="line"><span class="keyword">import</span> org.jdom.Element;</span><br><span class="line"><span class="keyword">import</span> org.jdom.input.SAXBuilder;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassPathXmlApplicationContext</span> <span class="keyword">implements</span> <span class="title">BeanFactory</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Map&lt;String , Object&gt; beans = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">	<span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ClassPathXmlApplicationContext</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		SAXBuilder sb=<span class="keyword">new</span> SAXBuilder();</span><br><span class="line">	    Document doc=sb.build(<span class="keyword">this</span>.getClass().getClassLoader().getResourceAsStream(<span class="string">"beans.xml"</span>)); <span class="comment">//构造文档对象</span></span><br><span class="line">	    Element root=doc.getRootElement(); <span class="comment">//获取根元素HD</span></span><br><span class="line">	    List list=root.getChildren(<span class="string">"bean"</span>);<span class="comment">//取名字为disk的所有元素</span></span><br><span class="line">	    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;list.size();i++)&#123;</span><br><span class="line">	       Element element=(Element)list.get(i);</span><br><span class="line">	       String id=element.getAttributeValue(<span class="string">"id"</span>);</span><br><span class="line">	       String clazz=element.getAttributeValue(<span class="string">"class"</span>);</span><br><span class="line">	       Object o = Class.forName(clazz).newInstance();</span><br><span class="line">	       System.out.println(<span class="string">"程序运行，读取配置文件,获取到，第"</span>+i+<span class="string">"个bean标签中id="</span>+id);</span><br><span class="line">	       System.out.println(<span class="string">"程序运行，读取配置文件,获取到，第"</span>+i+<span class="string">"个bean标签中class="</span>+clazz);</span><br><span class="line">	       beans.put(id, o);</span><br><span class="line">	       System.out.println(<span class="string">"程序运行，通过反射的方式创建类"</span>+clazz+<span class="string">"的对象，将对象保存在一个Map集合中，集合中的key="</span>+id);</span><br><span class="line">	       <span class="keyword">for</span>(Element propertyElement : (List&lt;Element&gt;)element.getChildren(<span class="string">"property"</span>)) &#123;</span><br><span class="line">	    	   String name = propertyElement.getAttributeValue(<span class="string">"name"</span>); <span class="comment">//userDAO</span></span><br><span class="line">	    	   String bean = propertyElement.getAttributeValue(<span class="string">"bean"</span>); <span class="comment">//u</span></span><br><span class="line">	           System.out.println(<span class="string">"第"</span>+i+<span class="string">"个&lt;bean&gt;标签下有&lt;property&gt;标签，就表示要为bean标签中"</span>+clazz+<span class="string">"类中的对象中的"</span>+name+<span class="string">"属性赋初始值"</span>);</span><br><span class="line">	    	   Object beanObject = beans.get(bean);<span class="comment">//UserDAOImpl instance</span></span><br><span class="line">	    	   String methodName = <span class="string">"set"</span> + name.substring(<span class="number">0</span>, <span class="number">1</span>).toUpperCase() + name.substring(<span class="number">1</span>);</span><br><span class="line">	    	   Method m = o.getClass().getMethod(methodName, beanObject.getClass().getInterfaces()[<span class="number">0</span>]);</span><br><span class="line">	    	   m.invoke(o, beanObject);</span><br><span class="line">	           System.out.println(<span class="string">"程序运行，通过反射的方式执行方法： "</span> + methodName+<span class="string">",为属性"</span>+name+<span class="string">"赋值成功"</span>);</span><br><span class="line">	       &#125;</span><br><span class="line">	    &#125;  </span><br><span class="line">	  &#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">getBean</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> beans.get(id);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="beans-xml配置文件"><a href="#beans-xml配置文件" class="headerlink" title="beans.xml配置文件"></a>beans.xml配置文件</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;beans&gt;</span><br><span class="line">	&lt;bean id=<span class="string">"u"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"com.xiewei.dao.impl.UserDAOImpl"</span> /&gt;</span><br><span class="line">	&lt;bean id=<span class="string">"userService"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"com.xiewei.service.UserService"</span> &gt;</span><br><span class="line">		&lt;property name=<span class="string">"userDAO"</span> bean=<span class="string">"u"</span>/&gt;</span><br><span class="line">	&lt;/bean&gt;	</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="UserServiceTest-测试类"><a href="#UserServiceTest-测试类" class="headerlink" title="UserServiceTest 测试类"></a>UserServiceTest 测试类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.service;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.model.User;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.spring.BeanFactory;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.spring.ClassPathXmlApplicationContext;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserServiceTest</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAdd</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		BeanFactory applicationContext = <span class="keyword">new</span> ClassPathXmlApplicationContext();</span><br><span class="line">		UserService service = (UserService)applicationContext.getBean(<span class="string">"userService"</span>);</span><br><span class="line">		User u = <span class="keyword">new</span> User();</span><br><span class="line">		u.setUsername(<span class="string">"lisi"</span>);</span><br><span class="line">		u.setPassword(<span class="string">"123"</span>);</span><br><span class="line">		service.add(u);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.	程序运行，读取配置文件,获取到，第0个bean标签中id=u  </span><br><span class="line">2.	程序运行，读取配置文件,获取到，第0个bean标签中class=com.xiewei.dao.impl.UserDAOImpl  </span><br><span class="line">3.      程序运行，通过反射的方式创建类com.xiewei.dao.impl.UserDAOImpl的对象，将对象保存在一个Map集合中，集合中的key=u  </span><br><span class="line">4.	程序运行，读取配置文件,获取到，第1个bean标签中id=userService  </span><br><span class="line">5.	程序运行，读取配置文件,获取到，第1个bean标签中class=com.xiewei.service.UserService  </span><br><span class="line">6.	程序运行，通过反射的方式创建类com.xiewei.service.UserService的对象，将对象保存在一个Map集合中，集合中的key=userService  </span><br><span class="line">7.	第1个&lt;bean&gt;标签下有&lt;property&gt;标签，就表示要为bean标签中com.xiewei.service.UserService类中的对象中的userDAO属性赋初始值  </span><br><span class="line">8.	程序运行，通过反射的方式执行方法： setUserDAO,为属性userDAO赋值成功  </span><br><span class="line">9.	执行UserDAO中的保存方法！ user saved!</span><br></pre></td></tr></table></figure>
+<hr>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/28/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/headportrait.jpg" alt="John Doe">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+        
+
+
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方式一：最原始的方式-直接new对象"><span class="nav-number">2.</span> <span class="nav-text">方式一：最原始的方式-直接new对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#UsersDao类"><span class="nav-number">2.1.</span> <span class="nav-text">UsersDao类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变更需求之后的改动"><span class="nav-number">2.2.</span> <span class="nav-text">变更需求之后的改动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不足之处"><span class="nav-number">2.3.</span> <span class="nav-text">不足之处</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方式二：通过面向接口编程解耦"><span class="nav-number">3.</span> <span class="nav-text">方式二：通过面向接口编程解耦</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#service层"><span class="nav-number">3.1.</span> <span class="nav-text">service层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dao层定义接口"><span class="nav-number">3.2.</span> <span class="nav-text">dao层定义接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dao层接口实现类"><span class="nav-number">3.3.</span> <span class="nav-text">dao层接口实现类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变更需求"><span class="nav-number">3.4.</span> <span class="nav-text">变更需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不足之处-1"><span class="nav-number">3.6.</span> <span class="nav-text">不足之处</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方式三：工厂模式进一步解耦"><span class="nav-number">4.</span> <span class="nav-text">方式三：工厂模式进一步解耦</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂类如下图"><span class="nav-number">4.1.</span> <span class="nav-text">工厂类如下图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对比面向接口编程"><span class="nav-number">4.2.</span> <span class="nav-text">对比面向接口编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不足之处-2"><span class="nav-number">4.3.</span> <span class="nav-text">不足之处</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方式四：工厂模式-反射-配置文件进一步解耦"><span class="nav-number">5.</span> <span class="nav-text">方式四：工厂模式+反射+配置文件进一步解耦</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#UserDAO接口"><span class="nav-number">5.1.</span> <span class="nav-text">UserDAO接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UserDAOImpl-dao层接口实现类"><span class="nav-number">5.2.</span> <span class="nav-text">UserDAOImpl dao层接口实现类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UserService类"><span class="nav-number">5.3.</span> <span class="nav-text">UserService类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#User-实体类"><span class="nav-number">5.4.</span> <span class="nav-text">User 实体类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BeanFactory模拟spring-工厂接口"><span class="nav-number">5.5.</span> <span class="nav-text">BeanFactory模拟spring 工厂接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ClassPathXmlApplicationContext-模拟spring读取配置文件的类"><span class="nav-number">5.6.</span> <span class="nav-text">ClassPathXmlApplicationContext 模拟spring读取配置文件的类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#beans-xml配置文件"><span class="nav-number">5.7.</span> <span class="nav-text">beans.xml配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UserServiceTest-测试类"><span class="nav-number">5.8.</span> <span class="nav-text">UserServiceTest 测试类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出"><span class="nav-number">5.9.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> Visitor
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> Total Visit
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
