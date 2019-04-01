@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="概述 方式一：最原始的方式-直接new对象 UsersDao类 变更需求之后的改动 dao层接口实现类 BeanFactory模拟spring 工厂接口 ClassPathXmlApplicationContext 模拟spring读取配置文件的类 beans.xml配置文件 UserServiceTest 测试类 输出     概述IOC 是英文 Inversion of Control(控">
+<meta name="description" content="概述IOC 是英文 Inversion of Control(控制反转)的缩写。 控制反转我认为可以这样理解，以前对象创建销毁的控制权是掌握在我们自己手里的，我们自己要创建对象，可以通过new的方式调用对象的构造方法去创建，而，使用了spring框架之后，这种对象控制权被反转了，对象的创建Spring框架帮我们做了。 下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。假设现在要实">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【spring01】模拟spring IOC的实现原理">
 <meta property="og:url" content="http://yoursite.com/2019/04/01/【spring01】模拟spring IOC的实现原理/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="概述 方式一：最原始的方式-直接new对象 UsersDao类 变更需求之后的改动 dao层接口实现类 BeanFactory模拟spring 工厂接口 ClassPathXmlApplicationContext 模拟spring读取配置文件的类 beans.xml配置文件 UserServiceTest 测试类 输出     概述IOC 是英文 Inversion of Control(控">
+<meta property="og:site_name" content="xw">
+<meta property="og:description" content="概述IOC 是英文 Inversion of Control(控制反转)的缩写。 控制反转我认为可以这样理解，以前对象创建销毁的控制权是掌握在我们自己手里的，我们自己要创建对象，可以通过new的方式调用对象的构造方法去创建，而，使用了spring框架之后，这种对象控制权被反转了，对象的创建Spring框架帮我们做了。 下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。假设现在要实">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://github.com/weiqinshian/weiqinshian.github.io/raw/blogSource/source/_posts/images/2019-04-02-22-24-06.png">
-<meta property="og:updated_time" content="2019-04-02T14:35:57.220Z">
+<meta property="og:updated_time" content="2019-04-01T05:29:56.154Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【spring01】模拟spring IOC的实现原理">
-<meta name="twitter:description" content="概述 方式一：最原始的方式-直接new对象 UsersDao类 变更需求之后的改动 dao层接口实现类 BeanFactory模拟spring 工厂接口 ClassPathXmlApplicationContext 模拟spring读取配置文件的类 beans.xml配置文件 UserServiceTest 测试类 输出     概述IOC 是英文 Inversion of Control(控">
+<meta name="twitter:description" content="概述IOC 是英文 Inversion of Control(控制反转)的缩写。 控制反转我认为可以这样理解，以前对象创建销毁的控制权是掌握在我们自己手里的，我们自己要创建对象，可以通过new的方式调用对象的构造方法去创建，而，使用了spring框架之后，这种对象控制权被反转了，对象的创建Spring框架帮我们做了。 下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。假设现在要实">
 <meta name="twitter:image" content="https://github.com/weiqinshian/weiqinshian.github.io/raw/blogSource/source/_posts/images/2019-04-02-22-24-06.png">
 
 
@@ -127,7 +127,7 @@
 
 
 
-  <title>【spring01】模拟spring IOC的实现原理 | Hexo</title>
+  <title>【spring01】模拟spring IOC的实现原理 | xw</title>
   
 
 
@@ -157,7 +157,7 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Hexo</span>
+        <span class="site-title">xw</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -267,13 +267,13 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/01/【spring01】模拟spring IOC的实现原理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="xw">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/headportrait.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="xw">
     </span>
 
     
@@ -311,6 +311,17 @@
 
           
           
+             <span id="/2019/04/01/【spring01】模拟spring IOC的实现原理/" class="leancloud_visitors" data-flag-title="【spring01】模拟spring IOC的实现原理">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
 
           
             <span class="post-meta-divider">|</span>
@@ -336,23 +347,7 @@
       
 
       
-        <!-- TOC -->
-<ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#方式一最原始的方式-直接new对象">方式一：最原始的方式-直接new对象</a><ul>
-<li><a href="#usersdao类">UsersDao类</a></li>
-<li><a href="#变更需求之后的改动">变更需求之后的改动</a></li>
-<li><a href="#dao层接口实现类">dao层接口实现类</a></li>
-<li><a href="#beanfactory模拟spring-工厂接口">BeanFactory模拟spring 工厂接口</a></li>
-<li><a href="#classpathxmlapplicationcontext-模拟spring读取配置文件的类">ClassPathXmlApplicationContext 模拟spring读取配置文件的类</a></li>
-<li><a href="#beansxml配置文件">beans.xml配置文件</a></li>
-<li><a href="#userservicetest-测试类">UserServiceTest 测试类</a></li>
-<li><a href="#输出">输出</a></li>
-</ul>
-</li>
-</ul>
-<!-- /TOC -->
-<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>IOC 是英文 Inversion of Control(控制反转)的缩写。</p>
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>IOC 是英文 Inversion of Control(控制反转)的缩写。</p>
 <p>控制反转我认为可以这样理解，以前对象创建销毁的控制权是掌握在我们自己手里的，我们自己要创建对象，可以通过new的方式调用对象的构造方法去创建，而，使用了spring框架之后，这种对象控制权被反转了，对象的创建Spring框架帮我们做了。</p>
 <p>下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。<br>假设现在要实现一个简单的三层的调用逻辑，即controller层调用service层，service层调用dao层。</p>
 <h1 id="方式一：最原始的方式-直接new对象"><a href="#方式一：最原始的方式-直接new对象" class="headerlink" title="方式一：最原始的方式-直接new对象"></a>方式一：最原始的方式-直接new对象</h1><p>service层要调用dao层的方法，最原始的方式就是直接创建一个dao层类的对象，然后，调用该对象的方法。</p>
@@ -395,7 +390,7 @@
 <p>使用这种模式的好处是不再需要修改所有的service层中类的代码，而，是只需要修改一个工厂类中的代码。<br>熟悉工厂模式的话，很容易理解，这个例子就不展示代码了。</p>
 <h2 id="对比面向接口编程"><a href="#对比面向接口编程" class="headerlink" title="对比面向接口编程"></a>对比面向接口编程</h2><p>这种方式，相对于面向接口编程的方式，service层中修改的地方，集中在工厂类中，进一步的减少了修改的代码的数量,降低了耦合性。</p>
 <h2 id="不足之处-2"><a href="#不足之处-2" class="headerlink" title="不足之处"></a>不足之处</h2><p>这种方式，还是需要修改工厂类的代码，然后，重新编译打包项目。<br>即：dao层接口和工厂类还是有耦合关系。</p>
-<h1 id="方式四：工厂模式-反射-配置文件进一步解耦"><a href="#方式四：工厂模式-反射-配置文件进一步解耦" class="headerlink" title="方式四：工厂模式+反射+配置文件进一步解耦"></a>方式四：工厂模式+反射+配置文件进一步解耦</h1><p>这种方式就是spring的ioc的方式，就是ioc的底层实现原理，在此我们模拟一下 。</p>
+<h1 id="方式四：工厂模式-反射-配置文件进一步解耦"><a href="#方式四：工厂模式-反射-配置文件进一步解耦" class="headerlink" title="方式四：工厂模式+反射+配置文件进一步解耦"></a>方式四：工厂模式+反射+配置文件进一步解耦</h1><p>这种方式就是spring的ioc的底层实现原理，在此我模拟一下 。</p>
 <h2 id="UserDAO接口"><a href="#UserDAO接口" class="headerlink" title="UserDAO接口"></a>UserDAO接口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.dao;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.model.User;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserDAO</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">(User user)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="UserDAOImpl-dao层接口实现类"><a href="#UserDAOImpl-dao层接口实现类" class="headerlink" title="UserDAOImpl dao层接口实现类"></a>UserDAOImpl dao层接口实现类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.dao.impl;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.dao.UserDAO;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.model.User;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDAOImpl</span> <span class="keyword">implements</span> <span class="title">UserDAO</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">(User user)</span> </span>&#123;		</span><br><span class="line">		System.out.println(<span class="string">"执行UserDAO中的保存方法！ user saved!"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="UserService类"><a href="#UserService类" class="headerlink" title="UserService类"></a>UserService类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.service;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.dao.UserDAO;</span><br><span class="line"><span class="keyword">import</span> com.xiewei.model.User;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> UserDAO userDAO;  </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">		userDAO.save(user);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> UserDAO <span class="title">getUserDAO</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> userDAO;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserDAO</span><span class="params">(UserDAO userDAO)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.userDAO = userDAO;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -505,10 +500,10 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image" src="/images/headportrait.jpg" alt="John Doe">
+              <img class="site-author-image" itemprop="image" src="/images/headportrait.jpg" alt="xw">
             
-              <p class="site-author-name" itemprop="name">John Doe</p>
-              <p class="site-description motion-element" itemprop="description"></p>
+              <p class="site-author-name" itemprop="name">xw</p>
+              <p class="site-description motion-element" itemprop="description">学海无涯，唯勤是岸！</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -579,7 +574,7 @@
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">xw</span>
 
   
 </div>
@@ -773,6 +768,113 @@
 
 
   
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("Lc8mylQGPv7K5OEnINCxVMpc-gzGzoHsz", "MD9hymXikAxkFpklxD8YilLY");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
 
   
 

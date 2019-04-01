@@ -79,13 +79,16 @@
 
 
 
+<meta name="description" content="学海无涯，唯勤是岸！">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="xw">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="xw">
+<meta property="og:description" content="学海无涯，唯勤是岸！">
 <meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="xw">
+<meta name="twitter:description" content="学海无涯，唯勤是岸！">
 
 
 
@@ -121,7 +124,7 @@
 
 
 
-  <title>Hexo</title>
+  <title>xw</title>
   
 
 
@@ -152,7 +155,7 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Hexo</span>
+        <span class="site-title">xw</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -262,13 +265,13 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/01/【spring01】模拟spring IOC的实现原理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="xw">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/headportrait.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="xw">
     </span>
 
     
@@ -308,6 +311,17 @@
 
           
           
+             <span id="/2019/04/01/【spring01】模拟spring IOC的实现原理/" class="leancloud_visitors" data-flag-title="【spring01】模拟spring IOC的实现原理">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
 
           
 
@@ -330,17 +344,8 @@
       
         
           
-          
-
-概述
-方式一：最原始的方式-直接new对象
-UsersDao类
-变更需求之后的改动
-dao层接口实现类
-BeanFactory模拟spring 工厂接口
-ClassPathXmlApplicationContext 模拟spring读取配置文件的类
-beans.xml配置文件
-UserServi
+          概述IOC 是英文 Inversion of Control(控制反转)的缩写。
+控制反转我认为可以这样理解，以前对象创建销毁的控制权是掌握在我们自己手里的，我们自己要创建对象，可以通过new的方式调用对象的构造方法去创建，而，使用了spring框架之后，这种对象控制权被反转了，对象的创建Sprin
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -398,13 +403,13 @@ UserServi
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/28/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="xw">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/headportrait.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="xw">
     </span>
 
     
@@ -443,6 +448,17 @@ UserServi
           
 
           
+          
+             <span id="/2019/03/28/hello-world/" class="leancloud_visitors" data-flag-title="Hello World">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
           
 
           
@@ -524,13 +540,13 @@ UserServi
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/28/第二篇文章测试/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="xw">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/headportrait.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="xw">
     </span>
 
     
@@ -569,6 +585,17 @@ UserServi
           
 
           
+          
+             <span id="/2019/03/28/第二篇文章测试/" class="leancloud_visitors" data-flag-title="第二篇文章测试">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
           
 
           
@@ -669,10 +696,10 @@ UserServi
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image" src="/images/headportrait.jpg" alt="John Doe">
+              <img class="site-author-image" itemprop="image" src="/images/headportrait.jpg" alt="xw">
             
-              <p class="site-author-name" itemprop="name">John Doe</p>
-              <p class="site-description motion-element" itemprop="description"></p>
+              <p class="site-author-name" itemprop="name">xw</p>
+              <p class="site-description motion-element" itemprop="description">学海无涯，唯勤是岸！</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -727,7 +754,7 @@ UserServi
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">xw</span>
 
   
 </div>
@@ -917,6 +944,113 @@ UserServi
 
 
   
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("Lc8mylQGPv7K5OEnINCxVMpc-gzGzoHsz", "MD9hymXikAxkFpklxD8YilLY");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
 
   
 
