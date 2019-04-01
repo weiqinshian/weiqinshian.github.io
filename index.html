@@ -335,24 +335,12 @@
 概述
 方式一：最原始的方式-直接new对象
 UsersDao类
-
-
-方式二：通过面向接口编程解耦
-service层
-dao层定义接口
-变更需求
-总结
-不足之处
-
-
-方式三：工厂模式进一步解耦
-工厂类如下图
-对比面向接口编程
-不足之处
-
-
-方式四：工厂模式+反射+配置文件进一步解耦
-UserDAO
+变更需求之后的改动
+dao层接口实现类
+BeanFactory模拟spring 工厂接口
+ClassPathXmlApplicationContext 模拟spring读取配置文件的类
+beans.xml配置文件
+UserServi
           ...
           <!--noindex-->
           <div class="post-button text-center">
