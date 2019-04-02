@@ -23,7 +23,7 @@ IOC 是英文 Inversion of Control(控制反转)的缩写。
 
 下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。
 假设现在要实现一个简单的三层的调用逻辑，即controller层调用service层，service层调用dao层。
-
+![](weiqinshian.github.io/source/_posts/images/2019-04-02-22-04-09.png)
 # 方式一：最原始的方式-直接new对象
 service层要调用dao层的方法，最原始的方式就是直接创建一个dao层类的对象，然后，调用该对象的方法。
 

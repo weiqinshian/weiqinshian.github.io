@@ -86,12 +86,13 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="概述 方式一：最原始的方式-直接new对象 UsersDao类 变更需求之后的改动 dao层接口实现类 BeanFactory模拟spring 工厂接口 ClassPathXmlApplicationContext 模拟spring读取配置文件的类 beans.xml配置文件 UserServiceTest 测试类 输出     概述IOC 是英文 Inversion of Control(控">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/04/01/【spring01】模拟spring%20IOC的实现原理/weiqinshian.github.io/source/_posts/images/2019-04-02-22-04-09.png">
 <meta property="og:image" content="http://yoursite.com/2019/04/01/【spring01】模拟spring%20IOC的实现原理/2019-04-01-15-38-13.png">
-<meta property="og:updated_time" content="2019-04-01T08:33:41.849Z">
+<meta property="og:updated_time" content="2019-04-02T14:04:19.667Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【spring01】模拟spring IOC的实现原理">
 <meta name="twitter:description" content="概述 方式一：最原始的方式-直接new对象 UsersDao类 变更需求之后的改动 dao层接口实现类 BeanFactory模拟spring 工厂接口 ClassPathXmlApplicationContext 模拟spring读取配置文件的类 beans.xml配置文件 UserServiceTest 测试类 输出     概述IOC 是英文 Inversion of Control(控">
-<meta name="twitter:image" content="http://yoursite.com/2019/04/01/【spring01】模拟spring%20IOC的实现原理/2019-04-01-15-38-13.png">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/01/【spring01】模拟spring%20IOC的实现原理/weiqinshian.github.io/source/_posts/images/2019-04-02-22-04-09.png">
 
 
 
@@ -354,7 +355,7 @@
 <!-- /TOC -->
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>IOC 是英文 Inversion of Control(控制反转)的缩写。</p>
 <p>控制反转我认为可以这样理解，以前对象创建销毁的控制权是掌握在我们自己手里的，我们自己要创建对象，可以通过new的方式调用对象的构造方法去创建，而，使用了spring框架之后，这种对象控制权被反转了，对象的创建Spring框架帮我们做了。</p>
-<p>下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。<br>假设现在要实现一个简单的三层的调用逻辑，即controller层调用service层，service层调用dao层。</p>
+<p>下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。<br>假设现在要实现一个简单的三层的调用逻辑，即controller层调用service层，service层调用dao层。<br><img src="weiqinshian.github.io/source/_posts/images/2019-04-02-22-04-09.png" alt></p>
 <h1 id="方式一：最原始的方式-直接new对象"><a href="#方式一：最原始的方式-直接new对象" class="headerlink" title="方式一：最原始的方式-直接new对象"></a>方式一：最原始的方式-直接new对象</h1><p>service层要调用dao层的方法，最原始的方式就是直接创建一个dao层类的对象，然后，调用该对象的方法。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringDemo</span> </span>&#123;    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 传统方式的调用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">demo1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        UsersDao userDAO = <span class="keyword">new</span> UsersDao();</span><br><span class="line">        userDAO.save();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="UsersDao类"><a href="#UsersDao类" class="headerlink" title="UsersDao类"></a>UsersDao类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiewei.spring.demo1;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UsersDao</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"UsersDao执行了..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
