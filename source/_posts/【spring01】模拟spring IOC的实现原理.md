@@ -1,21 +1,8 @@
 ---
 title: 【spring01】模拟spring IOC的实现原理
 ---
-<!-- TOC -->
 
-- [概述](#概述)
-- [方式一：最原始的方式-直接new对象](#方式一最原始的方式-直接new对象)
-    - [UsersDao类](#usersdao类)
-    - [变更需求之后的改动](#变更需求之后的改动)
-    - [dao层接口实现类](#dao层接口实现类)
-    - [BeanFactory模拟spring 工厂接口](#beanfactory模拟spring-工厂接口)
-    - [ClassPathXmlApplicationContext 模拟spring读取配置文件的类](#classpathxmlapplicationcontext-模拟spring读取配置文件的类)
-    - [beans.xml配置文件](#beansxml配置文件)
-    - [UserServiceTest 测试类](#userservicetest-测试类)
-    - [输出](#输出)
-
-<!-- /TOC -->
-# 概述 #
+# 概述
 
 IOC 是英文 Inversion of Control(控制反转)的缩写。
 
@@ -23,7 +10,7 @@ IOC 是英文 Inversion of Control(控制反转)的缩写。
 
 下面我将通过几个示例，来体现控制反转的原理，以及使用控制反转的好处。
 假设现在要实现一个简单的三层的调用逻辑，即controller层调用service层，service层调用dao层。
-![](weiqinshian.github.io/source/_posts/images/2019-04-02-22-04-09.png)
+
 # 方式一：最原始的方式-直接new对象
 service层要调用dao层的方法，最原始的方式就是直接创建一个dao层类的对象，然后，调用该对象的方法。
 
@@ -90,7 +77,6 @@ public class SpringDemo {
 dao层发生了变动，对service层的影响比较大，也就是耦合性高。
  在上面的示例中，dao层的变动，要修改service层代码的两处。如果，是一个非常复杂的系统，有成千上万个类的系统，那这个修改的工作量就会非常的庞大，改动越大出错的可能性就越大。
  那如何进行优化呢？可以使用面向接口编程的方式进行优化
-
 # 方式二：通过面向接口编程解耦
 
 **什么是面向接口编程？**
@@ -207,7 +193,12 @@ public class SpringDemo {
 }
 ```
 ## 工厂类如下图
-![](2019-04-01-15-38-13.png)
+
+<!--
+本地图片展示
+![](/weiqinshian.github.io/source/_posts/images/2019-04-02-22-24-06.png)
+-->
+![](https://github.com/weiqinshian/weiqinshian.github.io/raw/blogSource/source/_posts/images/2019-04-02-22-24-06.png)
 
 使用这种模式的好处是不再需要修改所有的service层中类的代码，而，是只需要修改一个工厂类中的代码。
 熟悉工厂模式的话，很容易理解，这个例子就不展示代码了。
@@ -223,7 +214,7 @@ public class SpringDemo {
 
 # 方式四：工厂模式+反射+配置文件进一步解耦
 
-这种方式就是spring的ioc的方式，就是ioc的底层实现原理，在此我们模拟一下 。
+这种方式就是spring的ioc的底层实现原理，在此我模拟一下 。
 ## UserDAO接口
 
 ```java
